@@ -20,9 +20,9 @@ namespace CW_W16_01_114.Controllers
             entity.Add("Id", Guid.NewGuid());
             entity.Add("LastName", "mohammadi");
 
-            var dataBase = new DataAccess.DataBase("Server=.\\SQLEXPRESS;Database=UserTest;" + "Integrated Security=true");
-            dataBase.Write(entity ,"Users1");
-            var res = dataBase.Read("Users1");
+            var userRepo = new DataAccess.UserRepository("Server=.\\SQLEXPRESS;Database=UserTest;" + "Integrated Security=true");
+            var users = userRepo.GetAll();
+            var user = userRepo.GetByIdWhitBooks(users.First().Id);
             return View();
         }
 

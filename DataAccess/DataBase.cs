@@ -3,7 +3,7 @@ using System.Data.SqlClient;
 
 namespace DataAccess
 {
-    public class DataBase
+    internal class DataBase
     {
         private string _connectionString;
 

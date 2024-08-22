@@ -18,7 +18,7 @@ namespace DataAccess
         public List<Book> GetAll()
         {
             var db = new DataBase(_connectionString);
-            var draftUsers = db.Read(tableName);
+            var draftUsers = db.GetAllData(tableName);
             var books = new List<Book>();
             foreach (var item in draftUsers)
             {
@@ -31,22 +31,35 @@ namespace DataAccess
             var user = new Book();
             foreach (var item in data)
             {
-                if (item.Key == "Id") user.Id = int.Parse(item.Value.ToString());
-                else if (item.Key == "Name") user.Name = item.Value.ToString();
-                else if (item.Key == "OwnerId") user.OwnerId =Guid.Parse( item.Value.ToString());
+                if (item.Key == nameof(Book.Id)) user.Id = int.Parse(item.Value.ToString());
+                else if (item.Key == nameof(Book.Name)) user.Name = item.Value.ToString();
+                else if (item.Key == nameof(Book.Owner)) user.OwnerId =Guid.Parse( item.Value.ToString());
             }
             return user;
         }
+        public List<Book> GetBy(string propName,object valueToSearch) { 
+            var db = new DataBase(_connectionString);
+            var res = new List<Book>();
+            foreach(var item in db.GetBy(tableName, propName, valueToSearch))
+            {
+                res.Add(FillToBook(item));
+            }
+            return res;
+        }
 
+
+
+        public Book GetById(int id) { 
+            var db = new DataBase(_connectionString);
+            return FillToBook( db.GetById(tableName, id));
+        }
         public Book GetByIdWithUser(int id)
         {
-            var all= GetAll();
-            var book = all.FirstOrDefault(x => x.Id == id);
+            var book = GetById(id);
             if (book != null)
             {
                 var userRepo = new UserRepository(_connectionString);
-                var allUsers = userRepo.GetAll();
-                book.Owner = allUsers.FirstOrDefault(x => x.Id == book.OwnerId);
+                book.Owner = userRepo.GetById(book.OwnerId);
             }
             return book ?? new Book();
         }

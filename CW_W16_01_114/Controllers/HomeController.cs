@@ -1,4 +1,5 @@
 using CW_W16_01_114.Models;
+using DataAccess;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -17,12 +18,22 @@ namespace CW_W16_01_114.Controllers
         {
             var entity = new Dictionary<string, object>();
             entity.Add("Name", "mohammad");
-            entity.Add("Id", Guid.NewGuid());
+            entity.Add("BookId", Guid.NewGuid());
             entity.Add("LastName", "mohammadi");
 
             var userRepo = new DataAccess.UserRepository("Server=.\\SQLEXPRESS;Database=UserTest;" + "Integrated Security=true");
-            var users = userRepo.GetAll();
+            
+            var users = new List<User>() {
+                new DataAccess.User() {Id = Guid.NewGuid(), Name = "ali", LastName = "alian" },
+                new DataAccess.User() {Id = Guid.NewGuid(), Name = "saeed", LastName = "alian" },
+                new DataAccess.User() {Id = Guid.NewGuid(), Name = "vali", LastName = "alian" },
+                new DataAccess.User() {Id = Guid.NewGuid(), Name = "asghar", LastName = "alian" }
+
+            };
+            userRepo.WriteAll(users);
             var user = userRepo.GetByIdWhitBooks(users.First().Id);
+            var bookRepo = new BookRepository("Server=.\\SQLEXPRESS;Database=UserTest;" + "Integrated Security=true");
+            var book = bookRepo.GetById(2);
             return View();
         }
 
